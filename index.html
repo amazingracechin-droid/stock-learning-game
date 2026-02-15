@@ -25,20 +25,22 @@
                             <stop offset="100%" style="stop-color:#7b61ff" />
                         </linearGradient>
                     </defs>
-                    <rect x="15" y="35" width="50" height="35" rx="5" fill="url(#lockGrad)" opacity="0.9"/>
-                    <path d="M25 35V25C25 14 55 14 55 25V35" fill="none" stroke="url(#lockGrad)" stroke-width="4" stroke-linecap="round"/>
-                    <circle cx="40" cy="50" r="5" fill="#0a0f1c"/>
-                    <line x1="40" y1="55" x2="40" y2="62" stroke="#0a0f1c" stroke-width="3" stroke-linecap="round"/>
+                    <rect x="15" y="35" width="50" height="35" rx="5" fill="url(#lockGrad)" opacity="0.9" />
+                    <path d="M25 35V25C25 14 55 14 55 25V35" fill="none" stroke="url(#lockGrad)" stroke-width="4"
+                        stroke-linecap="round" />
+                    <circle cx="40" cy="50" r="5" fill="#0a0f1c" />
+                    <line x1="40" y1="55" x2="40" y2="62" stroke="#0a0f1c" stroke-width="3" stroke-linecap="round" />
                 </svg>
             </div>
             <h1 class="lock-title">🔐 접근 제한</h1>
             <p class="lock-subtitle">이 게임에 접근하려면 비밀번호를 입력하세요</p>
             <div class="lock-input-group">
-                <input type="password" id="lock-password" class="lock-input" placeholder="비밀번호를 입력하세요..." autocomplete="off" />
+                <input type="password" id="lock-password" class="lock-input" placeholder="비밀번호를 입력하세요..."
+                    autocomplete="off" />
                 <button id="lock-submit" class="lock-btn" onclick="checkPassword()">
                     <span>입장하기</span>
                     <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                        <path d="M5 12h14M12 5l7 7-7 7" />
                     </svg>
                 </button>
             </div>
@@ -89,6 +91,10 @@
                 <div class="stat-box day-box">
                     <span class="stat-label">날짜</span>
                     <span class="stat-value" id="date">Day 1</span>
+                </div>
+                <div class="stat-box level-box">
+                    <span class="stat-label">등급</span>
+                    <span class="stat-value level-value" id="level-display">👶 주린이</span>
                 </div>
                 <div class="stat-box progress-box">
                     <span class="stat-label">진행률</span>
@@ -231,6 +237,7 @@
         </div>
     </div>
 
+    <script src="quiz-data.js"></script>
     <script src="script.js"></script>
 </body>
 

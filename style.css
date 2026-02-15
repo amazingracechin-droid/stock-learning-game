@@ -513,6 +513,16 @@ header#main-header::before {
     min-width: 110px;
 }
 
+.level-box {
+    min-width: 140px;
+    border-color: rgba(123, 97, 255, 0.3);
+}
+
+.level-value {
+    font-size: 1rem !important;
+    font-weight: 800;
+}
+
 .stat-box:hover {
     border-color: var(--border-glow);
     background: var(--bg-card-hover);

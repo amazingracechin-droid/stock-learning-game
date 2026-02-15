@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI 효도 비서 - 부모님의 온라인 생활을 도와주는 음성 기반 AI 에이전트. 장보기, 병원 예약, 공과금 납부를 음성으로 간편하게.">
+    <title>AI 효도 비서 - 부모님을 위한 음성 AI 도우미</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- ==================== 로딩 스플래시 ==================== -->
+    <div id="splash-screen" class="splash-screen">
+        <div class="splash-content">
+            <div class="splash-icon">🤖❤️</div>
+            <h1 class="splash-title">AI 효도 비서</h1>
+            <p class="splash-subtitle">부모님의 든든한 AI 도우미</p>
+            <div class="splash-loader">
+                <div class="loader-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 모드 선택 화면 ==================== -->
+    <div id="mode-select" class="screen mode-select hidden">
+        <div class="mode-header">
+            <div class="logo-icon">🤖❤️</div>
+            <h1>AI 효도 비서</h1>
+            <p>어떤 모드로 이용하시겠습니까?</p>
+        </div>
+        <div class="mode-cards">
+            <button class="mode-card elder-mode" id="btn-elder-mode" onclick="switchScreen('elder-main')">
+                <div class="mode-icon">👴👵</div>
+                <h2>어르신 모드</h2>
+                <p>큰 글씨, 음성으로 간편하게</p>
+                <span class="mode-badge">말로 하세요!</span>
+            </button>
+            <button class="mode-card guardian-mode" id="btn-guardian-mode" onclick="switchScreen('guardian-dashboard')">
+                <div class="mode-icon">👨‍👩‍👧‍👦</div>
+                <h2>보호자 모드</h2>
+                <p>부모님 활동 내역 확인</p>
+                <span class="mode-badge">대시보드</span>
+            </button>
+        </div>
+        <div class="mode-footer">
+            <p>🔒 안전하고 신뢰할 수 있는 AI 돌봄 서비스</p>
+        </div>
+    </div>
+
+    <!-- ==================== 어르신 메인 화면 ==================== -->
+    <div id="elder-main" class="screen elder-screen hidden">
+        <header class="elder-header">
+            <button class="back-btn" onclick="switchScreen('mode-select')">← 뒤로</button>
+            <div class="elder-header-info">
+                <span class="greeting" id="elder-greeting">안녕하세요, 어르신!</span>
+                <span class="date-display" id="date-display"></span>
+            </div>
+            <div class="connection-status" id="connection-status">
+                <span class="status-dot online"></span> 연결됨
+            </div>
+        </header>
+
+        <!-- 음성 인터페이스 영역 -->
+        <main class="elder-main-content">
+            <div class="voice-section">
+                <div class="voice-visual" id="voice-visual">
+                    <div class="voice-ring ring-1"></div>
+                    <div class="voice-ring ring-2"></div>
+                    <div class="voice-ring ring-3"></div>
+                    <button class="voice-btn" id="voice-btn" onclick="toggleVoiceRecognition()">
+                        <span class="mic-icon" id="mic-icon">🎤</span>
+                    </button>
+                </div>
+                <p class="voice-status" id="voice-status">버튼을 누르고 말씀해 주세요</p>
+                <div class="voice-result" id="voice-result" style="display:none;">
+                    <p class="result-label">들은 내용:</p>
+                    <p class="result-text" id="result-text"></p>
+                </div>
+            </div>
+
+            <!-- AI 대화 영역 -->
+            <div class="chat-section" id="chat-section">
+                <div class="chat-messages" id="chat-messages">
+                    <div class="chat-bubble ai">
+                        <div class="bubble-avatar">🤖</div>
+                        <div class="bubble-content">
+                            <p>안녕하세요! 저는 AI 효도 비서예요. 😊</p>
+                            <p>무엇을 도와드릴까요? 말씀해 주세요!</p>
+                            <div class="bubble-examples">
+                                <span>예시:</span>
+                                <em>"쌀이랑 우유 사줘"</em>
+                                <em>"병원 예약해 줘"</em>
+                                <em>"전기세 내줘"</em>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 빠른 메뉴 -->
+            <div class="quick-menu">
+                <h3>자주 쓰는 기능</h3>
+                <div class="quick-buttons">
+                    <button class="quick-btn" onclick="quickAction('shopping')">
+                        <span class="quick-icon">🛒</span>
+                        <span class="quick-label">장보기</span>
+                    </button>
+                    <button class="quick-btn" onclick="quickAction('hospital')">
+                        <span class="quick-icon">🏥</span>
+                        <span class="quick-label">병원 예약</span>
+                    </button>
+                    <button class="quick-btn" onclick="quickAction('bill')">
+                        <span class="quick-icon">💰</span>
+                        <span class="quick-label">공과금</span>
+                    </button>
+                    <button class="quick-btn" onclick="quickAction('weather')">
+                        <span class="quick-icon">🌤️</span>
+                        <span class="quick-label">날씨</span>
+                    </button>
+                    <button class="quick-btn" onclick="quickAction('medicine')">
+                        <span class="quick-icon">💊</span>
+                        <span class="quick-label">약 알림</span>
+                    </button>
+                    <button class="quick-btn" onclick="quickAction('call')">
+                        <span class="quick-icon">📞</span>
+                        <span class="quick-label">전화하기</span>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ==================== 쇼핑 스킬 화면 ==================== -->
+    <div id="shopping-skill" class="screen elder-screen hidden">
+        <header class="elder-header shopping-header">
+            <button class="back-btn" onclick="switchScreen('elder-main')">← 뒤로</button>
+            <h2 class="header-title">🛒 장보기 도우미</h2>
+            <div class="skill-badge">Shopping-Skill</div>
+        </header>
+
+        <main class="shopping-content">
+            <!-- 진행 단계 표시 -->
+            <div class="shopping-steps">
+                <div class="step active" id="step-1">
+                    <div class="step-circle">1</div>
+                    <span>품목 확인</span>
+                </div>
+                <div class="step-line" id="line-1"></div>
+                <div class="step" id="step-2">
+                    <div class="step-circle">2</div>
+                    <span>마트 선택</span>
+                </div>
+                <div class="step-line" id="line-2"></div>
+                <div class="step" id="step-3">
+                    <div class="step-circle">3</div>
+                    <span>장바구니</span>
+                </div>
+                <div class="step-line" id="line-3"></div>
+                <div class="step" id="step-4">
+                    <div class="step-circle">4</div>
+                    <span>확인</span>
+                </div>
+            </div>
+
+            <!-- 단계 1: 품목 확인 -->
+            <div class="shopping-phase" id="phase-1">
+                <div class="phase-card">
+                    <h3>📋 구매할 품목을 확인해 주세요</h3>
+                    <div class="item-list" id="shopping-items">
+                        <!-- 동적으로 추가됨 -->
+                    </div>
+                    <div class="add-item-row">
+                        <input type="text" id="add-item-input" placeholder="추가할 품목 입력..." class="elder-input">
+                        <button class="elder-btn-sm" onclick="addShoppingItem()">추가</button>
+                    </div>
+                    <button class="elder-btn-primary" onclick="nextShoppingStep(2)">다음 단계 →</button>
+                </div>
+            </div>
+
+            <!-- 단계 2: 마트 선택 -->
+            <div class="shopping-phase hidden" id="phase-2">
+                <div class="phase-card">
+                    <h3>🏪 어디서 구매할까요?</h3>
+                    <div class="mart-options">
+                        <button class="mart-card" onclick="selectMart('emart')" id="mart-emart">
+                            <div class="mart-logo">🟡</div>
+                            <span class="mart-name">이마트</span>
+                            <span class="mart-desc">신선식품 강점</span>
+                        </button>
+                        <button class="mart-card" onclick="selectMart('coupang')" id="mart-coupang">
+                            <div class="mart-logo">🟤</div>
+                            <span class="mart-name">쿠팡</span>
+                            <span class="mart-desc">로켓배송</span>
+                        </button>
+                        <button class="mart-card" onclick="selectMart('homeplus')" id="mart-homeplus">
+                            <div class="mart-logo">🔴</div>
+                            <span class="mart-name">홈플러스</span>
+                            <span class="mart-desc">할인 혜택</span>
+                        </button>
+                    </div>
+                    <button class="elder-btn-primary" onclick="nextShoppingStep(3)" id="btn-next-mart" disabled>다음 단계 →</button>
+                </div>
+            </div>
+
+            <!-- 단계 3: 자동 장바구니 담기 -->
+            <div class="shopping-phase hidden" id="phase-3">
+                <div class="phase-card">
+                    <h3>🤖 AI가 장바구니에 담는 중...</h3>
+                    <div class="automation-log" id="automation-log">
+                        <!-- 자동화 로그가 여기에 표시됨 -->
+                    </div>
+                    <div class="automation-progress">
+                        <div class="progress-bar" id="shopping-progress">
+                            <div class="progress-fill" id="progress-fill"></div>
+                        </div>
+                        <span class="progress-text" id="progress-text">준비 중...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 단계 4: 최종 확인 -->
+            <div class="shopping-phase hidden" id="phase-4">
+                <div class="phase-card">
+                    <h3>✅ 장바구니 담기 완료!</h3>
+                    <div class="cart-summary" id="cart-summary">
+                        <!-- 장바구니 요약 -->
+                    </div>
+                    <div class="cart-actions">
+                        <p class="safety-notice">⚠️ 안전을 위해 결제는 직접 확인 후 진행해 주세요</p>
+                        <button class="elder-btn-primary" onclick="notifyGuardian('shopping')">✅ 보호자에게 알리기</button>
+                        <button class="elder-btn-secondary" onclick="switchScreen('elder-main')">메인으로 돌아가기</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ==================== 병원 예약 화면 ==================== -->
+    <div id="hospital-skill" class="screen elder-screen hidden">
+        <header class="elder-header hospital-header">
+            <button class="back-btn" onclick="switchScreen('elder-main')">← 뒤로</button>
+            <h2 class="header-title">🏥 병원 예약 도우미</h2>
+            <div class="skill-badge">Hospital-Skill</div>
+        </header>
+        <main class="hospital-content">
+            <div class="phase-card">
+                <h3>어디가 불편하신가요?</h3>
+                <div class="symptom-buttons">
+                    <button class="symptom-btn" onclick="selectSymptom('head')">🤕 머리</button>
+                    <button class="symptom-btn" onclick="selectSymptom('stomach')">😫 배</button>
+                    <button class="symptom-btn" onclick="selectSymptom('back')">😣 허리</button>
+                    <button class="symptom-btn" onclick="selectSymptom('teeth')">🦷 이</button>
+                    <button class="symptom-btn" onclick="selectSymptom('eye')">👁️ 눈</button>
+                    <button class="symptom-btn" onclick="selectSymptom('checkup')">🩺 건강검진</button>
+                </div>
+                <div id="hospital-result" class="hospital-result" style="display:none;">
+                    <div class="hospital-card">
+                        <h4 id="hospital-name">🏥 서울대학교병원 내과</h4>
+                        <p id="hospital-info">📍 서울 종로구 | ⭐ 4.8 | 🕐 예약 가능</p>
+                        <div class="time-slots" id="time-slots">
+                            <button class="time-slot" onclick="selectTimeSlot(this)">오전 10:00</button>
+                            <button class="time-slot" onclick="selectTimeSlot(this)">오전 11:30</button>
+                            <button class="time-slot" onclick="selectTimeSlot(this)">오후 2:00</button>
+                            <button class="time-slot" onclick="selectTimeSlot(this)">오후 3:30</button>
+                        </div>
+                        <button class="elder-btn-primary" onclick="confirmHospital()" id="btn-confirm-hospital" disabled>예약 확인</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ==================== 보호자 대시보드 ==================== -->
+    <div id="guardian-dashboard" class="screen guardian-screen hidden">
+        <header class="guardian-header">
+            <button class="back-btn" onclick="switchScreen('mode-select')">← 뒤로</button>
+            <h2>👨‍👩‍👧‍👦 보호자 대시보드</h2>
+            <div class="guardian-actions">
+                <button class="header-action-btn" onclick="openSettings()">⚙️</button>
+                <button class="header-action-btn" onclick="refreshDashboard()">🔄</button>
+            </div>
+        </header>
+
+        <main class="dashboard-content">
+            <!-- 부모님 상태 카드 -->
+            <section class="dashboard-section">
+                <h3 class="section-title">👴 부모님 상태</h3>
+                <div class="status-cards">
+                    <div class="status-card health">
+                        <div class="status-icon">❤️</div>
+                        <div class="status-info">
+                            <span class="status-label">건강 상태</span>
+                            <span class="status-value good">양호</span>
+                        </div>
+                    </div>
+                    <div class="status-card activity">
+                        <div class="status-icon">📊</div>
+                        <div class="status-info">
+                            <span class="status-label">오늘 활동</span>
+                            <span class="status-value" id="activity-count">3건</span>
+                        </div>
+                    </div>
+                    <div class="status-card medication">
+                        <div class="status-icon">💊</div>
+                        <div class="status-info">
+                            <span class="status-label">약 복용</span>
+                            <span class="status-value done">완료</span>
+                        </div>
+                    </div>
+                    <div class="status-card subscription">
+                        <div class="status-icon">💳</div>
+                        <div class="status-info">
+                            <span class="status-label">구독 상태</span>
+                            <span class="status-value premium">프리미엄</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 최근 활동 내역 -->
+            <section class="dashboard-section">
+                <h3 class="section-title">📋 최근 활동 내역</h3>
+                <div class="activity-timeline" id="activity-timeline">
+                    <!-- 동적으로 추가됨 -->
+                </div>
+            </section>
+
+            <!-- 지출 요약 -->
+            <section class="dashboard-section">
+                <h3 class="section-title">💰 이번 달 지출 요약</h3>
+                <div class="expense-summary">
+                    <div class="expense-chart" id="expense-chart">
+                        <div class="chart-bar" style="--height: 70%;" data-label="식료품" data-amount="156,000">
+                            <div class="bar-fill grocery"></div>
+                            <span class="bar-label">식료품</span>
+                        </div>
+                        <div class="chart-bar" style="--height: 40%;" data-label="의료비" data-amount="89,000">
+                            <div class="bar-fill medical"></div>
+                            <span class="bar-label">의료비</span>
+                        </div>
+                        <div class="chart-bar" style="--height: 55%;" data-label="공과금" data-amount="124,000">
+                            <div class="bar-fill utility"></div>
+                            <span class="bar-label">공과금</span>
+                        </div>
+                        <div class="chart-bar" style="--height: 25%;" data-label="기타" data-amount="45,000">
+                            <div class="bar-fill etc"></div>
+                            <span class="bar-label">기타</span>
+                        </div>
+                    </div>
+                    <div class="expense-total">
+                        <span>총 지출</span>
+                        <strong id="total-expense">414,000원</strong>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 알림 설정 -->
+            <section class="dashboard-section">
+                <h3 class="section-title">🔔 알림 설정</h3>
+                <div class="notification-settings">
+                    <div class="notif-item">
+                        <span>장보기 완료 알림</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="notif-item">
+                        <span>병원 예약 알림</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="notif-item">
+                        <span>공과금 납부 알림</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="notif-item">
+                        <span>약 복용 알림</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="notif-item">
+                        <span>카카오톡 리포트 전송</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 아키텍처 다이어그램 -->
+            <section class="dashboard-section">
+                <h3 class="section-title">🏗️ 시스템 아키텍처</h3>
+                <div class="architecture-diagram" id="architecture-diagram">
+                    <div class="arch-layer user-layer">
+                        <div class="layer-title">👤 사용자 레이어</div>
+                        <div class="arch-nodes">
+                            <div class="arch-node">🎤 음성 입력<br><small>Web Speech API</small></div>
+                            <div class="arch-node">📱 모바일 앱<br><small>PWA</small></div>
+                        </div>
+                    </div>
+                    <div class="arch-arrow">⬇️ STT 변환</div>
+                    <div class="arch-layer ai-layer">
+                        <div class="layer-title">🧠 AI 처리 레이어</div>
+                        <div class="arch-nodes">
+                            <div class="arch-node">📝 NLU 엔진<br><small>인텐트 분류</small></div>
+                            <div class="arch-node">🔀 MCP 라우터<br><small>Model Context Protocol</small></div>
+                        </div>
+                    </div>
+                    <div class="arch-arrow">⬇️ 스킬 실행</div>
+                    <div class="arch-layer skill-layer">
+                        <div class="layer-title">⚡ 스킬 레이어 (MCP)</div>
+                        <div class="arch-nodes">
+                            <div class="arch-node skill">🛒 Shopping<br><small>이마트/쿠팡 API</small></div>
+                            <div class="arch-node skill">🏥 Hospital<br><small>병원 예약 API</small></div>
+                            <div class="arch-node skill">💰 Bill<br><small>공과금 API</small></div>
+                            <div class="arch-node skill">💊 Medicine<br><small>약 알림</small></div>
+                        </div>
+                    </div>
+                    <div class="arch-arrow">⬇️ 결과 리포팅</div>
+                    <div class="arch-layer report-layer">
+                        <div class="layer-title">📊 리포팅 레이어</div>
+                        <div class="arch-nodes">
+                            <div class="arch-node">💬 카카오톡<br><small>알림톡 API</small></div>
+                            <div class="arch-node">📱 SMS<br><small>문자 발송</small></div>
+                            <div class="arch-node">📧 이메일<br><small>보고서 발송</small></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- ==================== 알림 토스트 ==================== -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- ==================== 모달 ==================== -->
+    <div class="modal-overlay hidden" id="modal-overlay" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal()">✕</button>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <script src="stt-engine.js"></script>
+    <script src="intent-classifier.js"></script>
+    <script src="shopping-skill.js"></script>
+    <script src="report-service.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
