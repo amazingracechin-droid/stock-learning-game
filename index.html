@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>주식 초보 탈출기 - 주식 투자 학습 게임</title>
+    <meta name="description" content="게임으로 배우는 주식 투자! 초보자도 쉽게 배우는 주식 시뮬레이션 게임">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- 파티클 배경 -->
+    <canvas id="particle-canvas"></canvas>
+
+    <div id="app">
+        <!-- 상단 헤더 -->
+        <header id="main-header">
+            <div class="header-left">
+                <div class="logo-area">
+                    <div class="logo-icon">
+                        <svg viewBox="0 0 40 40" width="40" height="40">
+                            <defs>
+                                <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#00f5d4" />
+                                    <stop offset="100%" style="stop-color:#7b61ff" />
+                                </linearGradient>
+                            </defs>
+                            <polyline points="4,30 12,22 18,26 26,12 36,8" fill="none" stroke="url(#logoGrad)"
+                                stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                            <circle cx="36" cy="8" r="3" fill="#00f5d4" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h1>주식 초보 탈출기</h1>
+                        <span class="subtitle">투자의 기초를 게임으로 배우세요!</span>
+                    </div>
+                </div>
+            </div>
+            <div id="status-bar">
+                <button id="btn-academy" onclick="game.openAcademy()">
+                    <span class="btn-icon">🎓</span> 오늘의 학습
+                </button>
+                <div class="stat-box">
+                    <span class="stat-label">보유 현금</span>
+                    <span class="stat-value cash-value" id="money">1,000,000원</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">총 자산</span>
+                    <span class="stat-value total-value" id="total-assets">1,000,000원</span>
+                </div>
+                <div class="stat-box day-box">
+                    <span class="stat-label">날짜</span>
+                    <span class="stat-value" id="date">Day 1</span>
+                </div>
+                <div class="stat-box progress-box">
+                    <span class="stat-label">진행률</span>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" id="progress-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- 메인 콘텐츠 -->
+        <main>
+            <!-- 왼쪽: 주식 시장 -->
+            <section id="market-view">
+                <div class="section-header">
+                    <h2><span class="section-icon">📊</span> 주식 시장</h2>
+                    <div class="market-indicator" id="market-indicator">
+                        <span class="indicator-dot"></span>
+                        <span class="indicator-text">OPEN</span>
+                    </div>
+                </div>
+                <div id="stock-list">
+                    <!-- 주식 목록 -->
+                </div>
+
+                <!-- ⭐ 시간 조절 컨트롤 -->
+                <div id="time-controls">
+                    <button class="btn-advance btn-advance-1" onclick="game.advanceDay()">
+                        ⏩ 다음 날
+                    </button>
+                    <button class="btn-advance btn-advance-5" onclick="game.advanceMultipleDays(5)">
+                        ⏭️ 5일 진행
+                    </button>
+                    <button class="btn-advance btn-advance-10" onclick="game.advanceMultipleDays(10)">
+                        ⏭️ 10일 진행
+                    </button>
+                    <button class="btn-advance btn-advance-30" onclick="game.advanceMultipleDays(30)">
+                        📅 30일 진행
+                    </button>
+                </div>
+            </section>
+
+            <!-- 오른쪽 사이드바 -->
+            <aside id="sidebar">
+                <!-- 뉴스 피드 -->
+                <section id="news-feed">
+                    <div class="section-header">
+                        <h2><span class="section-icon">📰</span> 오늘의 뉴스</h2>
+                    </div>
+                    <ul id="news-list">
+                        <li class="info">게임에 오신 것을 환영합니다!</li>
+                    </ul>
+                </section>
+
+                <!-- 포트폴리오 -->
+                <section id="portfolio-view">
+                    <div class="section-header">
+                        <h2><span class="section-icon">💼</span> 내 포트폴리오</h2>
+                    </div>
+                    <div id="my-stocks">
+                        <p class="empty-text">아직 보유한 주식이 없습니다.</p>
+                    </div>
+                </section>
+            </aside>
+        </main>
+    </div>
+
+    <!-- 뉴스 팝업 모달 -->
+    <div id="news-popup" class="modal hidden">
+        <div class="modal-content news-popup-content">
+            <div class="news-glow"></div>
+            <div id="news-popup-icon"></div>
+            <h2 id="news-popup-title"></h2>
+            <p id="news-popup-body"></p>
+            <p id="news-popup-tip" class="tip-text"></p>
+            <button id="news-popup-btn" onclick="game.dismissNews()">확인 ▶</button>
+        </div>
+    </div>
+
+    <!-- 아카데미 모달 -->
+    <section id="academy-modal" class="modal hidden">
+        <div class="modal-content academy-modal-content">
+            <span class="close" onclick="game.closeAcademy()">&times;</span>
+            <h2><span class="section-icon">🎓</span> 오늘의 학습</h2>
+            <p class="academy-desc">매일 새로운 투자 지식을 배우고 퀴즈로 보상을 받으세요!</p>
+            <div id="academy-list">
+                <!-- 학습 목록 -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ⭐ 사전학습 모달 (STEP 1: 학습 → STEP 2: 퀴즈) -->
+    <div id="pre-study-modal" class="modal hidden">
+        <div class="modal-content pre-study-modal-content">
+            <div class="pre-study-header">
+                <div class="pre-study-badge">STEP 1</div>
+                <h2>📚 주식 투자 기초 학습</h2>
+                <p class="pre-study-subtitle">게임을 시작하기 전에, 주식의 기초를 배워볼까요?<br>학습 후 퀴즈를 통과하면 <strong>투자 지원금</strong>을 받을 수
+                    있어요!</p>
+            </div>
+
+            <div id="pre-study-content">
+                <!-- 학습 카드들 -->
+            </div>
+
+            <div class="pre-study-action">
+                <button class="btn-go-quiz" onclick="game.showPreStudyQuiz()">
+                    ✏️ 다 읽었어요! 퀴즈 풀기 →
+                </button>
+            </div>
+
+            <div id="pre-study-quiz-section" class="hidden">
+                <div class="pre-study-quiz-header">
+                    <div class="pre-study-badge">STEP 2</div>
+                    <h3>🧠 퀴즈 타임!</h3>
+                    <p>각 문제의 정답을 골라주세요. 모두 정답이면 보너스 지원금!</p>
+                </div>
+                <div id="pre-study-quiz-content">
+                    <!-- 퀴즈 카드들 -->
+                </div>
+                <button id="pre-study-submit-btn" class="btn-submit-quiz hidden" onclick="game.submitPreStudyQuiz()">
+                    📝 답안 제출하기
+                </button>
+            </div>
+
+            <div id="pre-study-result" class="hidden">
+                <!-- 결과 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 게임 종료 모달 -->
+    <div id="game-end-modal" class="modal hidden">
+        <div class="modal-content game-end-content">
+            <div class="game-end-glow"></div>
+            <div id="game-end-icon" class="game-end-icon"></div>
+            <h2 id="game-end-title" class="game-end-title"></h2>
+            <div id="game-end-stats" class="game-end-stats"></div>
+            <button id="game-end-btn" class="game-end-btn" onclick="location.reload()">🔄 다시 도전하기</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
