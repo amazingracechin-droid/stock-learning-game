@@ -1,4 +1,57 @@
 // =============================================
+// 🔒 비밀번호 잠금 시스템
+// =============================================
+const LOCK_PASSWORD = 'show me the stock';
+
+function checkPassword() {
+    const input = document.getElementById('lock-password');
+    const error = document.getElementById('lock-error');
+    const lockScreen = document.getElementById('lock-screen');
+
+    if (input.value.toLowerCase().trim() === LOCK_PASSWORD) {
+        // 잠금 해제 애니메이션
+        lockScreen.classList.add('unlocking');
+        sessionStorage.setItem('stock-game-unlocked', 'true');
+
+        setTimeout(() => {
+            lockScreen.classList.add('hidden');
+            document.getElementById('app').style.display = '';
+            document.getElementById('particle-canvas').style.display = '';
+        }, 800);
+    } else {
+        // 틀림 - 흔들기 애니메이션
+        error.classList.remove('hidden');
+        input.classList.add('shake');
+        setTimeout(() => input.classList.remove('shake'), 600);
+        input.value = '';
+        input.focus();
+    }
+}
+
+// 엔터 키로 비밀번호 제출
+document.addEventListener('DOMContentLoaded', () => {
+    const lockInput = document.getElementById('lock-password');
+    const lockScreen = document.getElementById('lock-screen');
+
+    if (lockInput) {
+        lockInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') checkPassword();
+        });
+    }
+
+    // 이미 잠금 해제된 상태라면 잠금 화면 숨기기
+    if (sessionStorage.getItem('stock-game-unlocked') === 'true') {
+        lockScreen.classList.add('hidden');
+        document.getElementById('app').style.display = '';
+        document.getElementById('particle-canvas').style.display = '';
+    } else {
+        // 잠금 상태: 게임 콘텐츠 숨기기
+        document.getElementById('app').style.display = 'none';
+        document.getElementById('particle-canvas').style.display = 'none';
+    }
+});
+
+// =============================================
 // 주식 초보 탈출기 - 메인 게임 스크립트
 // Premium UI Edition
 // =============================================
