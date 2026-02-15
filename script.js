@@ -632,7 +632,7 @@ class Game {
                     <h4>${item.quiz.question}</h4>
                     <div class="quiz-options-grid" id="quiz-options-${item.id}">
                         ${item.quiz.options.map((opt, optIndex) => `
-                            <button class="quiz-opt-btn" onclick="game.selectPreStudyAnswer(${item.id}, ${optIndex}, this)">
+                            <button class="quiz-opt-btn" onclick="game.selectPreStudyAnswer('${item.id}', ${optIndex}, this)">
                                 <span class="opt-number">${optIndex + 1}</span>
                                 <span class="opt-text">${opt}</span>
                             </button>
